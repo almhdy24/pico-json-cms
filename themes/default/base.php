@@ -13,6 +13,7 @@ $siteDescription = htmlspecialchars($settingsModel->get('site_description', 'Sim
     <title><?= $siteTitle ?><?= isset($post['title']) ? ' | '.htmlspecialchars($post['title']) : '' ?></title>
     <meta name="description" content="<?= $siteDescription ?>">
     <link rel="stylesheet" href="/assets/bulma.min.css">
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -50,6 +51,8 @@ $siteDescription = htmlspecialchars($settingsModel->get('site_description', 'Sim
             border-top: 1px solid #eee;
         }
     </style>
+
+    <?php if (function_exists('do_action')) do_action('head'); ?>
 </head>
 <body>
     <nav class="navbar is-light">
@@ -79,5 +82,7 @@ $siteDescription = htmlspecialchars($settingsModel->get('site_description', 'Sim
             <p class="has-text-grey"><?= $siteDescription ?></p>
         </div>
     </footer>
+
+    <?php if (function_exists('do_action')) do_action('footer'); ?>
 </body>
 </html>
