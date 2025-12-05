@@ -1,0 +1,13 @@
+{
+    "name": "pico-json-cms/pico-json-cms",
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "Controllers\\": "controllers/",
+            "Models\\": "models/"
+        }
+    },
+    "require": {
+        "erusev/parsedown": "^1.7"
+    }
+}
