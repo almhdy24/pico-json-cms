@@ -158,3 +158,28 @@ add_filter('post_content', function($content) {
 - User Permissions
 - Managing Settings
 - Publishing Your Work
+
+## ⚠️ Important Notice About the Name
+
+We want to clarify that **Pico JSON CMS** is a completely independent project and **not related** to [Pico CMS](https://picocms.org/), which is no longer actively maintained.  
+
+We chose the name **Pico JSON CMS** because:
+
+- It reflects the **lightweight, minimal, and JSON-based nature** of the CMS.
+- “Pico” implies **simplicity and small footprint**, which is what this CMS aims to provide.
+- Although the original Pico CMS exists, our project is separate, modern, and developer-focused, with unique features such as **plugins, themes, and live Markdown editing**.
+
+### Recommendation for Users
+
+If you are using Pico JSON CMS:
+
+- You can safely install and run it without worrying about conflicts.
+- We also provide a **`pico-notice.php` plugin** that shows a small alert to remind users about the name distinction.
+- Our goal is to be **clear, transparent, and open for contributions** from developers globally.
+
+**Live Demo:** [http://pico-json-cms.alwaysdata.net](http://pico-json-cms.alwaysdata.net)  
+**Admin Login:** `admin` / `secret123`
+
+---
+
+We encourage developers to **try it, provide feedback, and even share their own themes and plugins**. This is a separate project built for learning, experimentation, and lightweight site management.
