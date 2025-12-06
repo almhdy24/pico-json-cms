@@ -1,0 +1,6 @@
+- [Home](README.md)
+- [Complete Guide](guide.md)
+- [Admin Panel](admin.md)
+- [Themes](themes.md)
+- [Plugins](plugins.md)
+- [FAQ](faq.md)

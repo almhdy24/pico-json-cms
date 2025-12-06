@@ -11,11 +11,12 @@
  */
 
 return [
-    'base_url' => '',
-    'theme' => 'default',
-    'plugins' => [
-        'markdown-plugin.php',
-        'syntax-highlighting.php',
-        'pico-notice.php'
-    ]
+  "base_url" => "",
+  "theme" => "default",
+  "plugins" => [
+    "markdown-plugin.php",
+    "syntax-highlighting.php",
+    "pico-notice.php",
+    "system-info-notice.php"
+  ],
 ];

@@ -14,11 +14,15 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 <style>
     body {
         background: #f9f9f9;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
     .admin-container {
         max-width: 1100px;
         margin: 0 auto;
         padding: 30px;
+        flex: 1;
     }
     .flash {
         padding: 12px 15px;
@@ -39,6 +43,21 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         border-left: 4px solid #3b82f6;
         background: #e0f2fe;
         border-radius: 5px;
+    }
+    footer.admin-footer {
+        text-align: center;
+        padding: 20px 0;
+        background: #f5f5f5;
+        border-top: 1px solid #ddd;
+        font-size: 14px;
+        color: #555;
+    }
+    footer.admin-footer a {
+        color: #3b82f6;
+        text-decoration: none;
+    }
+    footer.admin-footer a:hover {
+        text-decoration: underline;
     }
 </style>
 
@@ -82,6 +101,13 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 </div>
 
+<footer class="admin-footer">
+    Powered by <strong>pico-json-cms</strong> | 
+    <a href="https://github.com/almhdy24/pico-json-cms" target="_blank" rel="noopener noreferrer">
+        GitHub Repository
+    </a> &copy; <?= date('Y') ?>
+</footer>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const burger = document.querySelector('.navbar-burger');
@@ -93,11 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
             menu.classList.toggle('is-active');
         });
     }
-});
-</script>
-<script src="/assets/easymde.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+
     const editors = document.querySelectorAll('.simple-editor');
     editors.forEach(textarea => {
         new EasyMDE({
@@ -116,5 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<script src="/assets/easymde.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pico-json-cms Docs</title>
+
+  <!-- Docsify Theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+
+  <!-- Optional: Custom mobile-friendly tweaks -->
+  <style>
+    /* Improve sidebar & main content spacing on mobile */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 80%;
+      }
+
+      .content {
+        padding: 0 1rem;
+      }
+
+      nav a {
+        font-size: 0.9rem;
+      }
+
+      body {
+        font-size: 1rem;
+      }
+    }
+
+    /* Make headers responsive */
+    h1, h2, h3, h4, h5, h6 {
+      word-wrap: break-word;
+    }
+
+    /* Ensure code blocks scroll on small screens */
+    pre {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <script>
+    window.$docsify = {
+      name: 'pico-json-cms',
+      repo: 'https://github.com/almhdy24/pico-json-cms',
+      loadSidebar: true,
+      subMaxLevel: 2,
+      coverpage: false,
+      auto2top: true,        // scroll to top on navigation
+      search: 'auto',        // enable search
+      executeScript: true,   // allow plugin scripts
+    }
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+</body>
+</html>
