@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - Router
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Handles URL routing and request dispatching to appropriate controllers and methods.
+ *
+ * License: MIT
+ */
+
 namespace Core;
 
 class Router

@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - Auth
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Authentication system for admin access control.
+ *
+ * License: MIT
+ */
+
 namespace Core;
 
 class Auth

@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - Global Functions
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Global helper functions for hooks and pagination.
+ *
+ * License: MIT
+ */
+
 use Core\Hooks;
 
 function add_action($hook, $callback) {
@@ -39,4 +50,3 @@ function paginate(array $items, int $perPage = 5, int $currentPage = 1): array
         'currentPage' => $currentPage,
     ];
 }
-

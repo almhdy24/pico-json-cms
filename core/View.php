@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - View
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Handles template rendering with theme support and plugin hooks.
+ *
+ * License: MIT
+ */
+
 namespace Core;
 
 class View {

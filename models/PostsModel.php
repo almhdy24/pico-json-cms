@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - PostsModel
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Model for managing blog posts with slug-based retrieval.
+ *
+ * License: MIT
+ */
+
 namespace Models;
 use Core\Model;
 

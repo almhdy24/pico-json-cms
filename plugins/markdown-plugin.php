@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - Markdown Plugin
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Plugin for converting Markdown content to HTML using Parsedown.
+ *
+ * License: MIT
+ */
+
 use Parsedown;
 
 // Filter to convert post content from Markdown to HTML

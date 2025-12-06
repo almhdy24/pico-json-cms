@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - App
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Main application class handling configuration, plugin loading, and bootstrapping.
+ *
+ * License: MIT
+ */
+
 namespace Core;
 
 class App {
@@ -23,7 +34,7 @@ class App {
             if(file_exists($file)) {
                 require_once $file;
             } else {
-                //  Log missing plugin
+                // Log missing plugin
                 error_log("Plugin not found: $file");
             }
         }

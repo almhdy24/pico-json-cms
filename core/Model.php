@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - Model
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Base model class for handling JSON file-based data operations.
+ *
+ * License: MIT
+ */
+
 namespace Core;
 
 class Model {

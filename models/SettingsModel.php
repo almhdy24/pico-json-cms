@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - SettingsModel
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Model for handling application settings stored in JSON.
+ *
+ * License: MIT
+ */
+
 namespace Models;
 use Core\Model;
 

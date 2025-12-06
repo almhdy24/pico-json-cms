@@ -1,4 +1,15 @@
 <?php
+/**
+ * Pico JSON CMS - Hooks
+ *
+ * Author: Elmahdi
+ * GitHub: https://github.com/almhdy24/pico-json-cms
+ * Description:
+ *   Plugin hook system supporting actions and filters for extensibility.
+ *
+ * License: MIT
+ */
+
 namespace Core;
 
 class Hooks {
