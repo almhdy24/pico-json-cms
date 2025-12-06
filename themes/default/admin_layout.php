@@ -33,6 +33,13 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         background: #ffe2e6;
         border-left: 4px solid #ef4444;
     }
+    .plugin-notice {
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #3b82f6;
+        background: #e0f2fe;
+        border-radius: 5px;
+    }
 </style>
 
 </head>
@@ -52,7 +59,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <a class="navbar-item <?= $_SERVER['REQUEST_URI'] === '/admin' ? 'is-active' : '' ?>" href="/admin">Posts</a>
             <a class="navbar-item <?= strpos($_SERVER['REQUEST_URI'], 'add') ? 'is-active' : '' ?>" href="/admin/add">Add New</a>
             <a class="navbar-item <?= strpos($_SERVER['REQUEST_URI'], 'settings') ? 'is-active' : '' ?>" href="/admin/settings">Settings</a>
-            <a class="navbar-item" href="admin/logout">Logout</a>
+            <a class="navbar-item" href="/admin/logout">Logout</a>
         </div>
     </div>
 </nav>
@@ -64,6 +71,11 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <?= htmlspecialchars($_SESSION['flash']['message']) ?>
         </div>
         <?php unset($_SESSION['flash']); ?>
+    <?php endif; ?>
+
+    <!-- Admin Notices Hook -->
+    <?php if (function_exists('do_action')): ?>
+        <?php do_action('admin_notices'); ?>
     <?php endif; ?>
 
     <?= $content ?>
@@ -92,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             element: textarea,
             spellChecker: false,
             autofocus: true,
-            forceSync: true,   // IMPORTANT: ensures textarea updates on submit
+            forceSync: true,
             status: false,
             toolbar: [
                 "bold", "italic", "heading", "|",
