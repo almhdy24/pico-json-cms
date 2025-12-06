@@ -6,9 +6,10 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title><?= htmlspecialchars($title ?? "Admin") ?></title>
+<title><?= htmlspecialchars($title ?? "Admin") ?> - Admin Panel </title>
 
 <link rel="stylesheet" href="/assets/bulma.min.css">
+<link rel="stylesheet" href="/assets/easymde.min.css">
 
 <style>
     body {
@@ -82,6 +83,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
-
+<script src="/assets/easymde.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const editors = document.querySelectorAll('.simple-editor');
+    editors.forEach(textarea => {
+        new EasyMDE({
+            element: textarea,
+            spellChecker: false,
+            autofocus: true,
+            forceSync: true,   // IMPORTANT: ensures textarea updates on submit
+            status: false,
+            toolbar: [
+                "bold", "italic", "heading", "|",
+                "unordered-list", "ordered-list", "|",
+                "link", "image", "|",
+                "preview", "side-by-side", "fullscreen"
+            ]
+        });
+    });
+});
+</script>
 </body>
 </html>

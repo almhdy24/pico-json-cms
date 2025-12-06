@@ -20,15 +20,18 @@ class HomeController extends Controller
   public function index(): void
   {
     $postsModel = $this->model("PostsModel");
-    $posts = array_reverse($postsModel->all(), true); // show newest first
+    $posts = array_reverse($postsModel->all(), true);
 
     $page = (int) ($_GET["page"] ?? 1);
-    $pagination = paginate($posts, 5, $page); // 5 posts per page
+    $pagination = paginate($posts, 5, $page);
+
+    $settings = $this->model("SettingsModel")->all();
 
     $this->view("index", [
       "posts" => $pagination["items"],
       "totalPages" => $pagination["totalPages"],
       "currentPage" => $pagination["currentPage"],
+      "pageTitle" => "Latest Posts", // Add this
     ]);
   }
 

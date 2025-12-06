@@ -4,13 +4,21 @@ use Models\SettingsModel;
 $settingsModel = new SettingsModel();
 $siteTitle = htmlspecialchars($settingsModel->get('site_title', 'My Blog'));
 $siteDescription = htmlspecialchars($settingsModel->get('site_description', 'Simple Blog'));
+
+// Determine page title
+$pageTitle = $siteTitle;
+if (isset($title)) {
+    $pageTitle = htmlspecialchars($title);
+} elseif (isset($post['title'])) {
+    $pageTitle = htmlspecialchars($post['title']) . ' | ' . $siteTitle;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $siteTitle ?><?= isset($post['title']) ? ' | '.htmlspecialchars($post['title']) : '' ?></title>
+    <title><?= $pageTitle ?></title>
     <meta name="description" content="<?= $siteDescription ?>">
     <link rel="stylesheet" href="/assets/bulma.min.css">
 

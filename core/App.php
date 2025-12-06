@@ -23,7 +23,7 @@ class App {
             if(file_exists($file)) {
                 require_once $file;
             } else {
-                // Optional: Log missing plugin
+                //  Log missing plugin
                 error_log("Plugin not found: $file");
             }
         }
