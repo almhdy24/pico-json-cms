@@ -40,9 +40,3 @@ function paginate(array $items, int $perPage = 5, int $currentPage = 1): array
     ];
 }
 
-function flash($message, $type = 'success') {
-    $_SESSION['flash'] = [
-        'message' => $message,
-        'type' => $type
-    ];
-}
