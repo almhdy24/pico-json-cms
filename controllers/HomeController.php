@@ -56,9 +56,10 @@ class HomeController extends Controller
         $post = $this->postsModel->findBySlug($slug);
 
         if ($post === null) {
-            http_response_code(404);
-            die("Post not found");
-        }
+    http_response_code(404);
+    $this->view("404", ["message" => "Post not found"]);
+    return;
+}
 
         $settings = $this->settingsModel->all();
 
