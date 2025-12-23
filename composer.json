@@ -8,6 +8,7 @@
         }
     },
     "require": {
-        "erusev/parsedown": "^1.7"
+        "erusev/parsedown": "^1.7",
+        "league/plates": "^3.6"
     }
 }
