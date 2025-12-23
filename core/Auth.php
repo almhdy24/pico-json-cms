@@ -15,16 +15,16 @@ namespace Core;
 class Auth
 {
     public static function requireAdmin(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (empty($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-            header("HTTP/1.1 403 Forbidden");
-            die("Access denied. Admins only.");
-        }
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+
+    if (empty($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
+        header('Location: /admin/login');
+        exit();
+    }
+}
 
     public static function loginAdmin(): void
     {
