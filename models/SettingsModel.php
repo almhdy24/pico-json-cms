@@ -15,7 +15,12 @@ use Core\App;
 use Core\Model;
 
 class SettingsModel extends Model {
-    protected $file = App::path('content', 'settings.json');
+    protected $file;
+    
+    public function __construct()
+  {
+    $this->file = App::path('content', 'settings.json');
+  }
 
     public function get($key, $default = null) {
         $data = $this->all();
