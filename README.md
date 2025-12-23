@@ -1,185 +1,142 @@
 # Pico JSON CMS
 
-**Live Demo:** [http://pico-json-cms.alwaysdata.net/](http://pico-json-cms.alwaysdata.net/)
+A **lightweight, database-less Content Management System** built with PHP and JSON files.
+
+Designed for **small websites, low-resource servers, and rapid deployment** where a full database setup is unnecessary.
 
 ---
 
-## Introduction
+## 🌟 Live Demo & Documentation
 
-Pico JSON CMS is a lightweight JSON-based CMS with Markdown support. It allows you to:
-
-- Create, edit, and delete posts
-- Manage site settings
-- Extend the system with **themes** and **plugins**
-- Designed for developers: full control, easy customization
+- **Live Demo:** [https://pico-json-cms.alwaysdata.net/](https://pico-json-cms.alwaysdata.net/)  
+- **Documentation:** [https://pico-json-cms.alwaysdata.net/docs](https://pico-json-cms.alwaysdata.net/docs)
 
 ---
 
-## Installation
+## 🧩 Why Pico JSON CMS?
 
-1. Clone the repository:
-```
-git clone git@github.com:almhdy24/pico-json-cms.git
-```
+Many small projects don’t need:
+- Complex databases
+- Heavy CMS platforms
+- Large hosting resources
 
-2. Navigate to the folder:
-```
-cd pico-json-cms
-```
+**Pico JSON CMS** solves this by using:
+- JSON files as storage
+- Simple PHP architecture
+- Minimal configuration
 
-3. Install dependencies:
-```
-composer install
-```
-
-4. Make the `content/` folder writable:
-```
-chmod -R 775 content/
-```
+Ideal for:
+- Personal websites
+- Landing pages
+- Student projects
+- Small business sites
+- Offline or low-cost hosting
 
 ---
 
-## Admin Login
+## ✨ Features
 
-- URL: `/admin/login`
-- Default credentials are in `admin.php`
-- Only admins can access `/admin/*` pages
-
----
-
-## Creating Posts
-
-- Go to `/admin/add` to create a post
-- Use **Markdown** for styling
-- Posts are stored in `content/posts.json`
-
-### Example Markdown
-```
-# My First Post
-Hello, this is **bold** and *italic* text.
-
-- Bullet point
-- Another bullet
-```
+- 📁 JSON-based content storage (no database)
+- 🔐 Simple admin panel
+- 📝 Create, edit, delete content
+- ⚡ Fast and lightweight
+- 🧱 Clean, readable PHP code
+- 📦 Easy to deploy on shared hosting
 
 ---
 
-## Themes
+## 🛠 Tech Stack
 
-- Themes are located in `/themes`
-- To create a new theme:
-  1. Copy the `default/` folder
-  2. Rename it
-  3. Edit `index.php`, `base.php`, `admin_layout.php`
-  4. Update CSS or JS for custom styling
+- PHP 7.4+
+- JSON file storage
+- HTML / CSS
+- Minimal JavaScript
 
-- Activate a theme by editing `config.php`:
-```
-'theme' => 'mytheme'
-```
+No framework required.
 
 ---
 
-## Plugins
+## ⚙️ Installation
 
-- Plugins live in `/plugins`
-- They can modify posts, settings, or add hooks
-- Example plugin: `hello-plugin.php`
-```
-<?php
-add_filter('post_content', function($content) {
-    return $content . "\n\n*Powered by Pico JSON CMS*";
-});
-```
+1. Clone or download the repository:
 
-- Syntax Highlighting plugin example:
-```
-<?php
-add_filter('post_content', function($content) {
-    $highlighted = preg_replace('/```(.*?)\n(.*?)```/s', '<pre><code class="$1">$2</code></pre>', $content);
-    return $highlighted;
-});
-```
+    git clone https://github.com/almhdy24/pico-json-cms.git
+
+2. Upload files to your PHP server.
+
+3. Ensure write permission for the data directory:
+
+    chmod -R 755 data/
+
+4. Open the project in your browser:
+
+    http://localhost/pico-json-cms
 
 ---
 
-## Markdown Tips
+## 🔐 Admin Access
 
-- `# H1`, `## H2`, `### H3` for headings
-- `**bold**` for bold
-- `*italic*` for italic
-- `- list item` for unordered lists
-- `[link](https://example.com)` for links
+Default credentials (change after first login):
 
----
-
-## User Roles
-
-- **Admin**: Full access
-- **Normal User**: View-only
+    Username: admin
+    Password: admin123
 
 ---
 
-## Publishing Your Work
+## 📂 Project Structure
 
-- Add posts using admin panel
-- Markdown formatting will render automatically
-- Make `content/` writable
-- Developers can create themes or plugins to extend functionality
-
-**Live Site:** [http://pico-json-cms.alwaysdata.net/](http://pico-json-cms.alwaysdata.net/)
-
----
-
-## Developer Hooks & Extending CMS
-
-- **Actions**: Use `add_action('hook_name', callback)` to run code at certain points
-- **Filters**: Use `add_filter('hook_name', callback)` to modify data
-- Example:
-```
-<?php
-add_filter('post_content', function($content) {
-    return $content . "\n\n*Footer added via plugin*";
-});
-```
-- Plugins are loaded automatically from `/plugins` folder
+    pico-json-cms/
+    │── admin/        # Admin dashboard
+    │── data/         # JSON content storage
+    │── core/         # Core CMS logic
+    │── views/        # UI templates
+    │── index.php     # Entry point
 
 ---
 
-## Example Posts on Live Demo
+## 📌 Use Cases
 
-- Welcome to Pico JSON CMS
-- Getting Started
-- Creating a New Post
-- Themes in Pico JSON CMS
-- Plugins in Pico JSON CMS
-- Admin Panel Overview
-- Markdown Styling Tips
-- User Permissions
-- Managing Settings
-- Publishing Your Work
-
-## ⚠️ Important Notice About the Name
-
-We want to clarify that **Pico JSON CMS** is a completely independent project and **not related** to [Pico CMS](https://picocms.org/), which is no longer actively maintained.  
-
-We chose the name **Pico JSON CMS** because:
-
-- It reflects the **lightweight, minimal, and JSON-based nature** of the CMS.
-- “Pico” implies **simplicity and small footprint**, which is what this CMS aims to provide.
-- Although the original Pico CMS exists, our project is separate, modern, and developer-focused, with unique features such as **plugins, themes, and live Markdown editing**.
-
-### Recommendation for Users
-
-If you are using Pico JSON CMS:
-
-- You can safely install and run it without worrying about conflicts.
-- We also provide a **`pico-notice.php` plugin** that shows a small alert to remind users about the name distinction.
-- Our goal is to be **clear, transparent, and open for contributions** from developers globally.
-
-**Live Demo:** [http://pico-json-cms.alwaysdata.net](http://pico-json-cms.alwaysdata.net)  
-**Admin Login:** `admin` / `secret123`
+- Simple CMS without MySQL
+- Projects where database access is restricted
+- Educational purposes
+- Rapid prototyping
 
 ---
 
-We encourage developers to **try it, provide feedback, and even share their own themes and plugins**. This is a separate project built for learning, experimentation, and lightweight site management.
+## ⚠️ Limitations
+
+- Not designed for large-scale applications
+- No built-in user roles (admin only)
+- JSON storage not suitable for high concurrency
+
+---
+
+## 🚀 Future Improvements
+
+- Role-based access
+- Content versioning
+- File uploads
+- API mode
+
+---
+
+## 📸 Screenshots
+
+    ![Admin Dashboard](screenshots/admin.png)
+    ![Content Editor](screenshots/editor.png)
+
+*(Add actual screenshots in `/screenshots` folder)*
+
+---
+
+## 👨‍💻 Author
+
+**Elmahdi Abdallh**  
+Backend & full-stack PHP developer  
+
+🌐 Website: https://almhdy.sd  
+📫 Email: ADD_YOUR_EMAIL_HERE
+
+---
+
+⭐ If you find this useful, feel free to star the repository.
