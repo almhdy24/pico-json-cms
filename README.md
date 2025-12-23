@@ -1,13 +1,39 @@
 # Pico JSON CMS
+![PHP](https://img.shields.io/badge/PHP-7.4%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-success)
+![Repo Size](https://img.shields.io/github/repo-size/almhdy24/pico-json-cms)
+![Stars](https://img.shields.io/github/stars/almhdy24/pico-json-cms?style=social)
 
 A **lightweight, database-less Content Management System** built with PHP and JSON files.
 
 Designed for **small websites, low-resource servers, and rapid deployment** where a full database setup is unnecessary.
 
 ---
+## 📑 Table of Contents
+
+- [Live Demo & Documentation](#-live-demo--documentation)
+- [Why Pico JSON CMS?](#-why-pico-json-cms)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Installation](#-installation)
+- [Admin Access](#-admin-access)
+- [Project Structure](#-project-structure)
+- [Use Cases](#-use-cases)
+- [Limitations](#-limitations)
+- [Future Improvements](#-future-improvements)
+- [Screenshots](#-screenshots)
+- [Support & Contribution](#-support--contribution)
+- [Author](#-author)
+  
 
 ## 🌟 Live Demo & Documentation
 
+**Demo Admin Login**
+- Username: demo
+- Password: demo123
+
+  
 - **Live Demo:** [https://pico-json-cms.alwaysdata.net/](https://pico-json-cms.alwaysdata.net/)  
 - **Documentation:** [https://pico-json-cms.alwaysdata.net/docs](https://pico-json-cms.alwaysdata.net/docs)
 
@@ -143,12 +169,30 @@ Default credentials (change after first login):
 
 ---
 
+## 🤝 Support & Contribution
+
+If you find a bug, have a suggestion, or want to improve the project:
+
+- Open an issue
+- Submit a pull request
+- Or contact me directly
+
+Contributions are welcome for:
+- Plugins
+- Themes
+- Performance improvements
+- Documentation
+
+This project is intentionally kept lightweight.
+
+
 ## 👨‍💻 Author
 
 **Elmahdi Abdallh**  
 Backend & full-stack PHP developer  
 
-🌐 Website: https://pico-json-cms.alwaysdata.net/
+🌐 Website: https://almhdy.sd
+
 📫 Email: contact@almhdy.sd 
 
 ---
