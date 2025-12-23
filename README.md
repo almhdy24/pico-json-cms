@@ -133,10 +133,13 @@ Default credentials (change after first login):
 
 ## 📸 Screenshots
 
-    ![Admin Dashboard](screenshots/admin.png)
-    ![Content Editor](screenshots/editor.png)
-
-*(Add actual screenshots in `/screenshots` folder)*
+![Admin Login](screenshots/admin_login.jpg)
+![Dashboard](screenshots/dashboard.jpg)
+![All Posts](screenshots/all_posts.jpg)
+![Add Post](screenshots/add_post.jpg)
+![Edit Post](screenshots/edit_post.jpg)
+![Settings](screenshots/settings.jpg)
+![Frontend View](screenshots/frontend.jpg)
 
 ---
 
