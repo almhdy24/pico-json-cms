@@ -134,8 +134,8 @@ Default credentials (change after first login):
 **Elmahdi Abdallh**  
 Backend & full-stack PHP developer  
 
-🌐 Website: https://almhdy.sd  
-📫 Email: ADD_YOUR_EMAIL_HERE
+🌐 Website: https://pico-json-cms.alwaysdata.net/
+📫 Email: contact@almhdy.sd 
 
 ---
 
