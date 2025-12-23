@@ -12,21 +12,19 @@
 
 namespace Core;
 
+use League\Plates\Engine;
+
 class View {
+    protected static $engine;
+
     public static function render($view, $data = []) {
-        extract($data);
-        $config = App::$config;
-        $theme = __DIR__ . "/../themes/{$config['theme']}/$view.php";
-
-        // Allow plugins to hook before render
-        Hooks::do_action('beforeRender', $view, $data);
-
-        if(file_exists($theme)) {
-            include $theme;
-        } else {
-            echo "View not found";
+        if (!self::$engine) {
+            $config = App::$config;
+            $themePath = App::path('themes', $config['theme']);
+            self::$engine = new Engine($themePath);
         }
-
+        Hooks::do_action('beforeRender', $view, $data);
+        echo self::$engine->render($view, $data);
         Hooks::do_action('afterRender', $view, $data);
     }
 }
