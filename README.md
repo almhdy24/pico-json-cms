@@ -82,15 +82,26 @@ Default credentials (change after first login):
     Password: admin123
 
 ---
-
 ## 📂 Project Structure
 
     pico-json-cms/
-    │── admin/        # Admin dashboard
-    │── data/         # JSON content storage
-    │── core/         # Core CMS logic
-    │── views/        # UI templates
-    │── index.php     # Entry point
+    │── .github/               # GitHub workflows and CI
+    │── assets/                # UI assets (CSS/JS/images)
+    │── controllers/           # Backend controllers
+    │── core/                  # Core CMS logic
+    │── docs/                  # Documentation (site/docs)
+    │── models/                # Data models
+    │── plugins/               # Plugin extensions
+    │── themes/
+    │   └── default/           # Default theme templates
+    │── .gitignore
+    │── .htaccess
+    │── admin.php              # Admin entry script
+    │── composer.json
+    │── composer.lock
+    │── config.php             # Global config
+    │── functions.php          # Shared functions
+    │── index.php              # Frontend entry
 
 ---
 
