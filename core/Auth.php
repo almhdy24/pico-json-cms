@@ -1,44 +1,62 @@
 <?php
-/**
- * Pico JSON CMS - Auth
- *
- * Author: Elmahdi
- * GitHub: https://github.com/almhdy24/pico-json-cms
- * Description:
- *   Authentication system for admin access control.
- *
- * License: MIT
- */
+
+declare(strict_types=1);
 
 namespace Core;
 
-class Auth
+/**
+ * ------------------------------------------------------
+ * Pico JSON CMS — Authentication (CORE)
+ * ------------------------------------------------------
+ *
+ * CORE VERSION: 1.0.0
+ *
+ * Responsibilities:
+ *  - Admin authentication state
+ *  - Login / logout handling
+ *  - Access guarding
+ *
+ * ⚠️ CORE FREEZE FILE
+ * Authentication mechanism MAY evolve internally,
+ * but public API MUST remain stable.
+ * ------------------------------------------------------
+ */
+
+final class Auth
 {
+    /**
+     * Check if current user is admin
+     */
+    public static function check(): bool
+    {
+        return Session::get('is_admin') === true;
+    }
+
+    /**
+     * Require admin access or redirect
+     */
     public static function requireAdmin(): void
-{
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-
-    if (empty($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-        header('Location: /admin/login');
-        exit();
-    }
-}
-
-    public static function loginAdmin(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (!self::check()) {
+            header('Location: /admin/login');
+            exit;
         }
-        $_SESSION['is_admin'] = true;
     }
 
-    public static function logoutAdmin(): void
+    /**
+     * Mark current session as admin
+     */
+    public static function login(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        unset($_SESSION['is_admin']);
+        Session::regenerate();
+        Session::set('is_admin', true);
+    }
+
+    /**
+     * Remove admin privileges
+     */
+    public static function logout(): void
+    {
+        Session::remove('is_admin');
     }
 }

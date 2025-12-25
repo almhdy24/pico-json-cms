@@ -1,156 +1,217 @@
 # Pico JSON CMS
 
-A **lightweight, database-less Content Management System** built with PHP and JSON files.
+**Pico JSON CMS** is a lightweight, flat-file Content Management System built with PHP and JSON — designed for simplicity, performance, and long-term maintainability.
 
-Designed for **small websites, low-resource servers, and rapid deployment** where a full database setup is unnecessary.
-
----
-
-## 🌟 Live Demo & Documentation
-
-- **Live Demo:** [https://pico-json-cms.alwaysdata.net/](https://pico-json-cms.alwaysdata.net/)  
-- **Documentation:** [https://pico-json-cms.alwaysdata.net/docs](https://pico-json-cms.alwaysdata.net/docs)
+It is ideal for small websites, low-resource servers, and developers who want full control without databases or heavy frameworks.
 
 ---
 
-## 🧩 Why Pico JSON CMS?
+## 🚀 Current Status
 
-Many small projects don’t need:
-- Complex databases
-- Heavy CMS platforms
-- Large hosting resources
+- **Latest Version:** v0.2.0  
+- **Previous Release:** v0.1.0-beta  
+- **Roadmap:** v1.0.0 (LTS / Core Frozen)
 
-**Pico JSON CMS** solves this by using:
-- JSON files as storage
-- Simple PHP architecture
-- Minimal configuration
-
-Ideal for:
-- Personal websites
-- Landing pages
-- Student projects
-- Small business sites
-- Offline or low-cost hosting
+Pico JSON CMS is under active development and transitioning toward a **stable, frozen core** with a plugin-driven architecture.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- 📁 JSON-based content storage (no database)
-- 🔐 Simple admin panel
-- 📝 Create, edit, delete content
-- ⚡ Fast and lightweight
-- 🧱 Clean, readable PHP code
-- 📦 Easy to deploy on shared hosting
+- 📁 JSON-based storage (no database required)
+- 🧩 Plugin system with hooks & filters
+- 📝 Markdown content powered by **League CommonMark**
+- 🎨 New theme system (layouts, partials, pages)
+- 🛠 Web-based installer (first-run setup)
+- 🔒 Semi-frozen core architecture (v1.0 goal)
+- ⚡ Fast, minimal, and shared-hosting friendly
+- 🧠 Clean MVC-inspired structure
 
 ---
 
-## 🛠 Tech Stack
+## ❌ What Was Removed
 
-- PHP 7.4+
-- JSON file storage
-- HTML / CSS
-- Minimal JavaScript
+- ❌ Bulma CSS framework
+- ❌ Inline admin.php entry file
+- ❌ Hard-coded UI dependencies
+- ❌ Parsedown / ParsedownExtra
+- ❌ Legacy theme structure
 
-No framework required.
+Everything is now **simpler, cleaner, and more maintainable**.
+
+---
+
+## 🧠 Philosophy
+
+Pico JSON CMS follows these principles:
+
+- **Small core**
+- **Explicit code**
+- **No magic**
+- **No database**
+- **Long-term stability**
+
+Once v1.0.0 is released, the **core API will be frozen**, ensuring backward compatibility for plugins and themes.
+
+---
+
+## 🧩 Plugin System
+
+Plugins use hooks and filters similar to WordPress, but much lighter:
+
+- `add_action()`
+- `add_filter()`
+- Lazy loading
+- No global pollution
+
+Included by default:
+- Markdown rendering (CommonMark)
+- Syntax highlighting (Prism.js, optional)
+
+---
+
+## 📝 Markdown Support
+
+Markdown is handled via:
+
+- **league/commonmark**
+- CommonMark-compliant
+- Extensible
+- PHP-8.1+ compatible
+- No deprecation warnings
+
+---
+
+## 🎨 Theme System
+
+Themes are fully file-based and structured:
+
+```
+themes/default/
+├── assets/
+│   └── css/
+├── layouts/
+├── pages/
+├── partials/
+├── admin/
+├── installer/
+└── theme.php
+```
+
+No framework is enforced — **pure CSS and semantic HTML**.
 
 ---
 
 ## ⚙️ Installation
 
-1. Clone or download the repository:
+### 1️⃣ Download or clone
 
-    git clone https://github.com/almhdy24/pico-json-cms.git
+```bash
+git clone https://github.com/almhdy24/pico-json-cms.git
+```
 
-2. Upload files to your PHP server.
+### 2️⃣ Upload to your server
 
-3. Ensure write permission for the data directory:
+Upload the project files to your PHP server (shared hosting is supported).
 
-    chmod -R 755 data/
+### 3️⃣ Set permissions
 
-4. Open the project in your browser:
+Ensure the `content/` directory is writable:
 
-    http://localhost/pico-json-cms
+```bash
+chmod -R 755 content/
+```
+
+### 4️⃣ Run the installer
+
+Open your browser and visit:
+
+```
+http://your-site/installer
+```
+
+The installer will guide you through:
+- System checks
+- Admin account creation
+- Site configuration
+
+After installation, the installer locks itself automatically.
 
 ---
 
-## 🔐 Admin Access
+## 🔐 Admin Panel
 
-Default credentials (change after first login):
+- Secure login
+- Brute-force protection
+- Soft delete (trash system)
+- Auto cleanup for old trashed posts
+- Settings stored in JSON
 
-    Username: admin
-    Password: admin123
+Admin URL:
+
+```
+/admin
+```
 
 ---
+
 ## 📂 Project Structure
 
-    pico-json-cms/
-    │── .github/               # GitHub workflows and CI
-    │── assets/                # UI assets (CSS/JS/images)
-    │── controllers/           # Backend controllers
-    │── core/                  # Core CMS logic
-    │── docs/                  # Documentation (site/docs)
-    │── models/                # Data models
-    │── plugins/               # Plugin extensions
-    │── themes/
-    │   └── default/           # Default theme templates
-    │── .gitignore
-    │── .htaccess
-    │── admin.php              # Admin entry script
-    │── composer.json
-    │── composer.lock
-    │── config.php             # Global config
-    │── functions.php          # Shared functions
-    │── index.php              # Frontend entry
-
----
-
-## 📌 Use Cases
-
-- Simple CMS without MySQL
-- Projects where database access is restricted
-- Educational purposes
-- Rapid prototyping
+```
+pico-json-cms/
+├── CHANGELOG.md
+├── CORE_FREEZE.md
+├── composer.json
+├── composer.lock
+├── config.php
+├── content/
+│   ├── posts.json
+│   └── settings.json
+├── controllers/
+├── core/
+├── models/
+├── plugins/
+├── themes/
+│   └── default/
+├── index.php
+└── functions.php
+```
 
 ---
 
 ## ⚠️ Limitations
 
-- Not designed for large-scale applications
-- No built-in user roles (admin only)
-- JSON storage not suitable for high concurrency
+- Single admin user
+- Not intended for high-concurrency traffic
+- Flat-file storage (JSON)
+
+These are **intentional design choices**.
 
 ---
 
-## 🚀 Future Improvements
+## 🛣 Roadmap
 
-- Role-based access
-- Content versioning
-- File uploads
-- API mode
+### v0.2.x
+- Stabilize installer
+- Finalize plugin API
+- Improve documentation
 
----
-
-## 📸 Screenshots
-
-![Admin Login](screenshots/admin_login.jpg)
-![Dashboard](screenshots/dashboard.jpg)
-![All Posts](screenshots/all_posts.jpg)
-![Add Post](screenshots/add_post.jpg)
-![Edit Post](screenshots/edit_post.jpg)
-![Settings](screenshots/settings.jpg)
-![Frontend View](screenshots/frontend.jpg)
+### v1.0.0 (LTS)
+- Core freeze
+- Plugin & theme API locked
+- Long-term support
+- Backward compatibility guaranteed
 
 ---
 
 ## 👨‍💻 Author
 
 **Elmahdi Abdallh**  
-Backend & full-stack PHP developer  
+PHP Backend & CMS Developer  
 
-🌐 Website: https://pico-json-cms.alwaysdata.net/
-📫 Email: contact@almhdy.sd 
+- GitHub: https://github.com/almhdy24  
+- Website: https://pico-json-cms.alwaysdata.net  
 
 ---
 
-⭐ If you find this useful, feel free to star the repository.
+⭐ If Pico JSON CMS helps you, consider starring the repository.

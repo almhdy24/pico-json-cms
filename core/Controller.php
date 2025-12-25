@@ -1,55 +1,119 @@
 <?php
-/**
- * Pico JSON CMS - Controller
- *
- * Author: Elmahdi
- * GitHub: https://github.com/almhdy24/pico-json-cms
- * Description:
- *   Base controller class providing view rendering, model loading, and flash messaging.
- *
- * License: MIT
- */
+
+declare(strict_types=1);
 
 namespace Core;
 
-class Controller
+/**
+ * ------------------------------------------------------
+ * Pico JSON CMS — Base Controller (CORE)
+ * ------------------------------------------------------
+ *
+ * CORE VERSION: 1.0.0
+ *
+ * Responsibilities:
+ *  - Provide view rendering helpers
+ *  - Provide model loading
+ *  - Provide request & session helpers
+ *
+ * ⚠️ CORE FREEZE FILE
+ * Public methods MUST NOT change after v1.0.0
+ * ------------------------------------------------------
+ */
+
+abstract class Controller
 {
-    protected function view($view, $data = [])
+    /**
+     * Controller constructor
+     * Session is guaranteed to be available
+     */
+    public function __construct()
+    {
+        Session::start();
+    }
+
+    /* =====================================================
+     * View / Model
+     * ===================================================== */
+
+    /**
+     * Render a view
+     */
+    protected function view(string $view, array $data = []): void
     {
         View::render($view, $data);
     }
 
-    protected function model($model)
+    /**
+     * Load a model by name
+     */
+    protected function model(string $model): object
     {
-        $class = "Models\\$model";
-        if (class_exists($class)) {
-            return new $class();
+        $class = "Models\\{$model}";
+
+        if (!class_exists($class)) {
+            throw new \RuntimeException("Model not found: {$class}");
         }
-        return null;
+
+        return new $class();
     }
 
-    protected function setFlash(string $type, string $message): void
+    /* =====================================================
+     * Session Helpers
+     * ===================================================== */
+
+    /**
+     * Flash a message to the session
+     */
+    protected function flash(string $type, string $message): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $_SESSION["flash"] = [
-            "type" => $type,
-            "message" => $message,
-        ];
+        Session::flash($type, $message);
     }
 
-    protected function getFlash(): ?array
+    /**
+     * Retrieve and clear flash messages
+     */
+    protected function getFlash(): array
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        return Session::getFlash();
+    }
 
-        if (!empty($_SESSION["flash"])) {
-            $flash = $_SESSION["flash"];
-            unset($_SESSION["flash"]);
-            return $flash;
-        }
-        return null;
+    /* =====================================================
+     * Request Helpers
+     * ===================================================== */
+
+    /**
+     * Check if request method is POST
+     */
+    protected function isPost(): bool
+    {
+        return ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
+    }
+
+    /**
+     * Retrieve input value from POST or GET
+     */
+    protected function input(string $key, mixed $default = null): mixed
+    {
+        return $_POST[$key]
+            ?? $_GET[$key]
+            ?? $default;
+    }
+
+    /**
+     * Redirect and terminate execution
+     */
+    protected function redirect(string $path): never
+    {
+        header("Location: {$path}");
+        exit;
+    }
+
+    /**
+     * Escape output safely
+     */
+    protected function escape(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
 }

@@ -1,0 +1,13 @@
+{
+    "name": "Markdown",
+    "slug": "markdown",
+    "version": "1.0.0",
+    "description": "Convert Markdown content to HTML using league/commonmark",
+    "author": "Elmahdi",
+    "license": "MIT",
+    "requires": {
+        "php": ">=8.1",
+        "pico": ">=1.0.0"
+    },
+    "bootstrap": "plugin.php"
+}
