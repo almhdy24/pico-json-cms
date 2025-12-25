@@ -8,6 +8,10 @@
         }
     },
     "require": {
-        "erusev/parsedown": "^1.7"
+        "league/plates": "^3.6",
+        "league/commonmark": "^2.8"
+    },
+    "require-dev": {
+        "kint-php/kint": "^6.1"
     }
 }

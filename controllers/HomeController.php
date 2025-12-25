@@ -1,14 +1,17 @@
 <?php
 /**
- * Pico JSON CMS - HomeController
+ * Pico JSON CMS — Home Controller
  *
- * Author: Elmahdi
- * GitHub: https://github.com/almhdy24/pico-json-cms
- * Description:
- *   Handles the public-facing pages: homepage listing and single post view.
+ * CORE STATUS: SEMI-FROZEN (v1.0)
+ *
+ * Responsibilities:
+ * - Homepage listing
+ * - Single post rendering
  *
  * License: MIT
  */
+
+declare(strict_types=1);
 
 namespace Controllers;
 
@@ -16,56 +19,53 @@ use Core\Controller;
 use Models\PostsModel;
 use Models\SettingsModel;
 
-class HomeController extends Controller
+final class HomeController extends Controller
 {
-    private PostsModel $postsModel;
-    private SettingsModel $settingsModel;
+    private PostsModel $posts;
+    private SettingsModel $settings;
 
     public function __construct()
     {
-        $this->postsModel = $this->model("PostsModel");
-        $this->settingsModel = $this->model("SettingsModel");
+        parent::__construct();
+
+        $this->posts    = $this->model(PostsModel::class);
+        $this->settings = $this->model(SettingsModel::class);
     }
 
     /**
-     * Homepage - list all posts with pagination
+     * Homepage
      */
     public function index(): void
     {
-        $posts = array_reverse($this->postsModel->all(), true);
+        $posts = array_reverse($this->posts->published(), true);
 
-        $page = max(1, (int) ($_GET["page"] ?? 1));
+        $page = max(1, (int) ($_GET['page'] ?? 1));
         $pagination = paginate($posts, 5, $page);
 
-        $settings = $this->settingsModel->all();
-
-        $this->view("index", [
-            "posts"       => $pagination["items"],
-            "totalPages"  => $pagination["totalPages"],
-            "currentPage" => $pagination["currentPage"],
-            "pageTitle"   => "Latest Posts",
-            "settings"    => $settings,
+        $this->view('pages/home', [
+            'posts'       => $pagination['items'],
+            'currentPage' => $pagination['currentPage'],
+            'totalPages'  => $pagination['totalPages'],
+            'settings'    => $this->settings->all(),
         ]);
     }
 
     /**
-     * Single post view by slug
+     * Single post by slug
      */
     public function viewPost(string $slug): void
     {
-        $post = $this->postsModel->findBySlug($slug);
+        $post = $this->posts->findBySlug($slug);
 
-        if ($post === null) {
+        if (!$post) {
             http_response_code(404);
-            die("Post not found");
+            $this->view('pages/404', ['message' => 'Post not found']);
+            return;
         }
 
-        $settings = $this->settingsModel->all();
-
-        $this->view("single", [
-            "post"     => $post,
-            "settings" => $settings,
-            "pageTitle" => $post["title"] ?? "Post",
+        $this->view('pages/single', [
+            'post'     => $post,
+            'settings' => $this->settings->all(),
         ]);
     }
 }

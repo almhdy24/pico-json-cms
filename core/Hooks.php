@@ -1,46 +1,79 @@
 <?php
-/**
- * Pico JSON CMS - Hooks
- *
- * Author: Elmahdi
- * GitHub: https://github.com/almhdy24/pico-json-cms
- * Description:
- *   Plugin hook system supporting actions and filters for extensibility.
- *
- * License: MIT
- */
+
+declare(strict_types=1);
 
 namespace Core;
 
-class Hooks {
-    private static $actions = [];
-    private static $filters = [];
+/**
+ * ------------------------------------------------------
+ * Pico JSON CMS — Hooks System (CORE)
+ * ------------------------------------------------------
+ *
+ * CORE VERSION: 1.0.0
+ *
+ * Responsibilities:
+ *  - Register and execute actions
+ *  - Register and apply filters
+ *
+ * ⚠️ CORE FREEZE FILE
+ * Hook semantics MUST remain stable
+ * ------------------------------------------------------
+ */
 
-    public static function add_action($hook, $callback) {
-        if(!isset(self::$actions[$hook])) self::$actions[$hook] = [];
+final class Hooks
+{
+    /**
+     * Action hooks
+     */
+    private static array $actions = [];
+
+    /**
+     * Filter hooks
+     */
+    private static array $filters = [];
+
+    /* =====================================================
+     * Actions
+     * ===================================================== */
+
+    public static function add_action(string $hook, callable $callback): void
+    {
         self::$actions[$hook][] = $callback;
     }
 
-    public static function do_action($hook, ...$args) {
-        if(isset(self::$actions[$hook])) {
-            foreach(self::$actions[$hook] as $callback) {
-                call_user_func_array($callback, $args);
-            }
+    public static function do_action(string $hook, mixed ...$args): void
+    {
+        if (empty(self::$actions[$hook])) {
+            return;
+        }
+
+        foreach (self::$actions[$hook] as $callback) {
+            $callback(...$args);
         }
     }
 
-    // Filters allow modifying a value
-    public static function add_filter($hook, $callback) {
-        if(!isset(self::$filters[$hook])) self::$filters[$hook] = [];
+    /* =====================================================
+     * Filters
+     * ===================================================== */
+
+    public static function add_filter(string $hook, callable $callback): void
+    {
         self::$filters[$hook][] = $callback;
     }
 
-    public static function apply_filters($hook, $value, ...$args) {
-        if(isset(self::$filters[$hook])) {
-            foreach(self::$filters[$hook] as $callback) {
-                $value = call_user_func_array($callback, array_merge([$value], $args));
-            }
+    public static function apply_filters(
+        string $hook,
+        mixed $value,
+        mixed ...$args
+    ): mixed {
+        if (empty(self::$filters[$hook])) {
+            return $value;
         }
+
+        foreach (self::$filters[$hook] as $callback) {
+            $value = $callback($value, ...$args);
+        }
+
         return $value;
     }
 }

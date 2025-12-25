@@ -1,280 +1,321 @@
 <?php
 /**
- * Pico JSON CMS - AdminController
+ * Pico JSON CMS — Admin Controller
  *
- * Author: Elmahdi
- * GitHub: https://github.com/almhdy24/pico-json-cms
- * Description:
- *   Lightweight PHP flat-file CMS using JSON storage.
- *   Handles admin login, dashboard, posts management, and settings.
+ * CORE STATUS: SEMI-FROZEN (v1.0)
+ * Public methods & routes should remain stable.
  *
- * Security Notes:
- *   - Login attempts limited
- *   - Session regenerated on login
- *   - Password hashed in admin.php
- *   - Consider enabling HTTPS & secure cookies in production
+ * Responsibilities:
+ * - Authentication
+ * - Dashboard & metrics
+ * - Posts CRUD + trash
+ * - Settings management
  *
  * License: MIT
  */
 
+declare(strict_types=1);
+
 namespace Controllers;
 
 use Core\Controller;
+use Core\Session;
+use Core\View;
+use Core\App;
 use Core\Auth;
 use Models\PostsModel;
 use Models\SettingsModel;
 
-class AdminController extends Controller
+final class AdminController extends Controller
 {
-    private PostsModel $postsModel;
-    private SettingsModel $settingsModel;
+    private const MAX_LOGIN_ATTEMPTS = 5;
+    private const LOCKOUT_SECONDS   = 300;
+    private const TRASH_DAYS        = 30;
+
+    private PostsModel $posts;
+    private SettingsModel $settings;
 
     public function __construct()
     {
-        // Determine the current action from the URL
-        $uri = trim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/");
-        $segments = explode("/", $uri);
-        $action = $segments[1] ?? "index";
+        parent::__construct();
+        $this->guard();
 
-        // Require admin authentication for all methods except login/logout
-        if (!in_array($action, ["login", "logout"])) {
-            Auth::requireAdmin();
-        }
+        $this->posts    = $this->model(PostsModel::class);
+        $this->settings = $this->model(SettingsModel::class);
 
-        $this->postsModel = $this->model("PostsModel");
-        $this->settingsModel = $this->model("SettingsModel");
+        $this->autoCleanTrash();
+
+        View::share([
+            'trashCount' => count($this->posts->trashed()),
+        ]);
     }
 
-    /**
-     * Admin login page
-     */
+    /* =====================================================
+     * Authentication
+     * ===================================================== */
+
     public function login(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_set_cookie_params([
-                "httponly" => true,
-                // "secure" => true, // enable if using HTTPS
-                "samesite" => "Lax",
+        if (Auth::check()) {
+            $this->redirect('/admin/dashboard');
+        }
+
+        $throttle = Session::get('login_throttle', [
+            'attempts'     => 0,
+            'locked_until' => null,
+        ]);
+
+        if ($throttle['locked_until'] && time() < $throttle['locked_until']) {
+            $this->view('admin/login', [
+                'flash' => [[
+                    'type'    => 'error',
+                    'message' => 'Too many attempts. Please wait.',
+                ]],
             ]);
-            session_start();
+            return;
         }
 
-        if (!empty($_SESSION["is_admin"])) {
-            header("Location: /admin/dashboard");
-            exit();
+        if ($this->isPost()) {
+            $this->processLogin($throttle);
+            return;
         }
 
-        $_SESSION["login_attempts"] = $_SESSION["login_attempts"] ?? 0;
-
-        // Lock out if too many attempts
-        if ($_SESSION["login_attempts"] >= 5) {
-            $this->setFlash("error", "Too many login attempts. Please try again later.");
-            header("Location: /admin/login");
-            exit();
-        }
-
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $username = trim($_POST["username"] ?? "");
-            $password = $_POST["password"] ?? "";
-
-            $config = include __DIR__ . "/../admin.php";
-
-            if ($username === $config["admin_user"] && password_verify($password, $config["admin_pass"])) {
-                session_regenerate_id(true);
-                $_SESSION["is_admin"] = true;
-                $_SESSION["login_attempts"] = 0;
-
-                Auth::loginAdmin();
-                header("Location: /admin/dashboard");
-                exit();
-            } else {
-                $_SESSION["login_attempts"]++;
-                sleep(1); // small delay to slow brute force
-                $this->setFlash("error", "Invalid credentials");
-                header("Location: /admin/login");
-                exit();
-            }
-        }
-
-        $flash = $this->getFlash();
-        $this->view("admin_login", ["flash" => $flash]);
+        $this->view('admin/login', ['flash' => $this->getFlash()]);
     }
 
-    /**
-     * Logout admin
-     */
+    private function processLogin(array $throttle): void
+    {
+        $username = trim($this->input('username', ''));
+        $password = (string) $this->input('password', '');
+
+        $config = require App::path('content', '.admin.php');
+
+        $valid =
+            hash_equals($config['admin_user'], $username) &&
+            password_verify($password, $config['admin_pass']);
+
+        if ($valid) {
+            Session::remove('login_throttle');
+            Auth::login();
+            $this->redirect('/admin/dashboard');
+        }
+
+        $throttle['attempts']++;
+
+        if ($throttle['attempts'] >= self::MAX_LOGIN_ATTEMPTS) {
+            $throttle['locked_until'] = time() + self::LOCKOUT_SECONDS;
+        }
+
+        Session::set('login_throttle', $throttle);
+        sleep(1);
+
+        $this->flash('error', 'Invalid credentials.');
+        $this->redirect('/admin/login');
+    }
+
     public function logout(): void
     {
-        Auth::logoutAdmin();
-        header("Location: /admin/login");
-        exit();
+        Auth::logout();
+        Session::destroy();
+        $this->redirect('/admin/login');
     }
 
-    /**
-     * Dashboard view
-     */
+    /* =====================================================
+     * Dashboard
+     * ===================================================== */
+
     public function dashboard(): void
     {
-        $posts = $this->postsModel->all();
-        $settings = $this->settingsModel->all();
-        $postsCount = count($posts);
+        $published = $this->posts->published();
+        $trashed   = $this->posts->trashed();
 
-        $this->view("dashboard", [
-            "posts" => $posts,
-            "postsCount" => $postsCount,
-            "settings" => $settings,
+        $this->view('admin/dashboard', [
+            'postsCount' => count($published),
+            'trashCount' => count($trashed),
+            'settings'   => $this->settings->all(),
         ]);
     }
 
-    /**
-     * Posts list
-     */
+    /* =====================================================
+     * Posts
+     * ===================================================== */
+
     public function index(): void
     {
-        $this->view("admin", ["posts" => $this->postsModel->all()]);
-    }
+        $page    = max(1, (int) ($_GET['page'] ?? 1));
+        $perPage = 5;
 
-    /**
-     * Add new post
-     */
-    public function add(): void
-    {
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $title = trim($_POST["title"] ?? "");
-            $content = trim($_POST["content"] ?? "");
+        $posts = $this->posts->published();
+        $total = count($posts);
 
-            if (!$title || !$content) {
-                $this->setFlash("error", "Title and content are required.");
-                header("Location: /admin/add");
-                exit();
-            }
+        $totalPages = max(1, (int) ceil($total / $perPage));
+        $page       = min($page, $totalPages);
 
-            $posts = $this->postsModel->all();
-            $id = time();
-            $slug = $this->generateSlug($title, $posts);
+        $offset = (int) (($page - 1) * $perPage);
 
-            $posts[$id] = [
-                "title" => $title,
-                "slug" => $slug,
-                "content" => $content,
-            ];
-
-            $this->postsModel->save($posts);
-
-            $this->setFlash("success", "Post added successfully!");
-            header("Location: /admin");
-            exit();
-        }
-
-        $this->view("admin_add");
-    }
-
-    /**
-     * Edit existing post
-     */
-    public function edit(?int $id = null): void
-    {
-        $posts = $this->postsModel->all();
-
-        if ($id === null || !isset($posts[$id])) {
-            $this->setFlash("error", "Post not found.");
-            header("Location: /admin");
-            exit();
-        }
-
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $title = trim($_POST["title"] ?? "");
-            $content = trim($_POST["content"] ?? "");
-
-            if (!$title || !$content) {
-                $this->setFlash("error", "Title and content are required.");
-                header("Location: /admin/edit/$id");
-                exit();
-            }
-
-            $posts[$id] = [
-                "title" => $title,
-                "content" => $content,
-                "slug" => $this->generateSlug($title, $posts, $id),
-            ];
-
-            $this->postsModel->save($posts);
-            $this->setFlash("success", "Post updated successfully!");
-            header("Location: /admin");
-            exit();
-        }
-
-        $this->view("admin_edit", [
-            "id" => $id,
-            "post" => $posts[$id],
+        $this->view('admin/posts', [
+            'posts'       => array_slice($posts, $offset, $perPage, true),
+            'currentPage' => $page,
+            'totalPages'  => $totalPages,
+            'basePath'    => '/admin',
         ]);
     }
 
-    /**
-     * Delete post
-     */
-    public function delete(?int $id = null): void
+    public function add(): void
     {
-        if ($id === null) {
-            $this->setFlash("error", "Invalid post ID.");
-            header("Location: /admin");
-            exit();
+        if (!$this->isPost()) {
+            $this->view('admin/post-add');
+            return;
         }
 
-        $posts = $this->postsModel->all();
+        [$title, $content] = $this->validatePost();
 
-        if (isset($posts[$id])) {
-            unset($posts[$id]);
-            $this->postsModel->save($posts);
-            $this->setFlash("success", "Post deleted.");
-        } else {
-            $this->setFlash("error", "Post not found.");
-        }
+        $id = time();
 
-        header("Location: /admin");
-        exit();
+        $this->posts->savePost($id, [
+            'title'      => $title,
+            'slug'       => $this->generateSlug($title),
+            'content'    => $content,
+            'created_at' => time(),
+            'updated_at' => time(),
+            'deleted_at' => null,
+        ]);
+
+        $this->flash('success', 'Post created.');
+        $this->redirect('/admin');
     }
 
-    /**
-     * Update settings
-     */
+    public function edit(?int $id): void
+    {
+        if (!$id || !$post = $this->posts->find($id)) {
+            $this->redirect('/admin');
+        }
+
+        if ($this->isPost()) {
+            [$title, $content] = $this->validatePost();
+
+            $post['title']      = $title;
+            $post['content']    = $content;
+            $post['slug']       = $this->generateSlug($title, $id);
+            $post['updated_at'] = time();
+
+            $this->posts->savePost($id, $post);
+
+            $this->flash('success', 'Post updated.');
+            $this->redirect('/admin');
+        }
+
+        $this->view('admin/post-edit', compact('id', 'post'));
+    }
+
+    public function delete(?int $id): void
+    {
+        if ($post = $this->posts->find($id)) {
+            $post['deleted_at'] = time();
+            $this->posts->savePost($id, $post);
+        }
+
+        $this->redirect('/admin');
+    }
+
+    public function trash(): void
+    {
+        $this->view('admin/trash', [
+            'posts' => $this->posts->trashed(),
+        ]);
+    }
+
+    public function restore(?int $id): void
+    {
+        if ($post = $this->posts->find($id)) {
+            $post['deleted_at'] = null;
+            $this->posts->savePost($id, $post);
+        }
+
+        $this->redirect('/admin/trash');
+    }
+
+    public function destroy(?int $id): void
+    {
+        $this->posts->deletePost($id);
+        $this->redirect('/admin/trash');
+    }
+
+    public function emptyTrash(): void
+    {
+        foreach ($this->posts->trashed() as $id => $_) {
+            $this->posts->deletePost($id);
+        }
+
+        $this->redirect('/admin/trash');
+    }
+
+    /* =====================================================
+     * Settings
+     * ===================================================== */
+
     public function settings(): void
     {
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            foreach ($_POST as $key => $value) {
-                $this->settingsModel->update($key, $value);
-            }
-
-            $this->setFlash("success", "Settings updated successfully!");
-            header("Location: /admin/settings");
-            exit();
+        if ($this->isPost()) {
+            $this->settings->setMany($_POST);
+            $this->flash('success', 'Settings saved.');
+            $this->redirect('/admin/settings');
         }
 
-        $this->view("settings", ["settings" => $this->settingsModel->all()]);
+        $this->view('admin/settings', [
+            'settings' => $this->settings->all(),
+        ]);
     }
 
-    /**
-     * Generate unique slug for post
-     */
-    private function generateSlug(string $title, array $posts, ?int $currentId = null): string
-    {
-        $baseSlug = strtolower(trim(preg_replace("/[^A-Za-z0-9]+/", "-", $title), "-"));
-        $slug = $baseSlug;
-        $i = 1;
+    /* =====================================================
+     * Helpers (Frozen)
+     * ===================================================== */
 
-        while (true) {
-            $duplicate = false;
-            foreach ($posts as $id => $post) {
-                if ($currentId !== null && $id == $currentId) continue;
-                if (isset($post["slug"]) && $post["slug"] === $slug) {
-                    $duplicate = true;
-                    break;
-                }
+    private function guard(): void
+    {
+        $action = explode('/', trim($_SERVER['REQUEST_URI'], '/'))[1] ?? 'index';
+
+        if (!in_array($action, ['login', 'logout'], true)) {
+            Auth::requireAdmin();
+        }
+    }
+
+    private function validatePost(): array
+    {
+        $title   = trim($this->input('title', ''));
+        $content = trim($this->input('content', ''));
+
+        if ($title === '' || $content === '') {
+            $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin');
+        }
+
+        return [$title, $content];
+    }
+
+    private function generateSlug(string $title, ?int $ignoreId = null): string
+    {
+        $base = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $title), '-'));
+        $slug = $base;
+        $i    = 1;
+
+        foreach ($this->posts->all() as $id => $post) {
+            if ($id === $ignoreId) continue;
+            if (($post['slug'] ?? '') === $slug) {
+                $slug = $base . '-' . $i++;
             }
-            if (!$duplicate) break;
-            $slug = $baseSlug . "-" . $i++;
         }
 
         return $slug;
+    }
+
+    private function autoCleanTrash(): void
+    {
+        $limit = time() - (self::TRASH_DAYS * 86400);
+
+        foreach ($this->posts->trashed() as $id => $post) {
+            if ($post['deleted_at'] < $limit) {
+                $this->posts->deletePost($id);
+            }
+        }
     }
 }

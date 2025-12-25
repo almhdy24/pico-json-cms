@@ -1,29 +1,55 @@
 <?php
 /**
- * Pico JSON CMS - SettingsModel
+ * Pico JSON CMS - Settings Model
  *
- * Author: Elmahdi
- * GitHub: https://github.com/almhdy24/pico-json-cms
- * Description:
- *   Model for handling application settings stored in JSON.
- *
- * License: MIT
+ * Stores global site configuration.
+ * Intended for low-frequency writes.
  */
 
+declare(strict_types=1);
+
 namespace Models;
+
+use Core\App;
 use Core\Model;
 
-class SettingsModel extends Model {
-    protected $file = __DIR__ . '/../content/settings.json';
+class SettingsModel extends Model
+{
+    protected string $file;
 
-    public function get($key, $default = null) {
-        $data = $this->all();
-        return $data[$key] ?? $default;
+    public function __construct()
+    {
+        $this->file = App::path('content', 'settings.json');
+        parent::__construct();
     }
 
-    public function update($key, $value) {
-        $data = $this->all();
-        $data[$key] = $value;
-        $this->save($data);
+    /**
+     * Retrieve a setting value
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        $settings = $this->all();
+        return $settings[$key] ?? $default;
+    }
+
+    /**
+     * Update a single setting
+     */
+    public function set(string $key, mixed $value): bool
+    {
+        $settings = $this->all();
+        $settings[$key] = $value;
+
+        return $this->save($settings);
+    }
+
+    /**
+     * Update multiple settings at once
+     */
+    public function setMany(array $values): bool
+    {
+        return $this->save(
+            array_merge($this->all(), $values)
+        );
     }
 }

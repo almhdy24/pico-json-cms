@@ -16,7 +16,5 @@ return [
   "plugins" => [
     "markdown-plugin.php",
     "syntax-highlighting.php",
-    "pico-notice.php",
-    "system-info-notice.php"
   ],
 ];
