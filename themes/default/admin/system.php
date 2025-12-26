@@ -1,104 +1,36 @@
-<?php $this->layout('layouts/admin'); ?>
+<?php $this->layout('layouts/admin', ['title' => 'System']) ?>
 
-<h1 class="admin-title">
-  <i data-lucide="activity"></i>
-  System Information
-</h1>
+<h1 class="title">System Information</h1>
 
-<div class="system-grid">
+<h2 class="subtitle">CMS</h2>
+<ul>
+  <li><strong>Name:</strong> <?= $system['cms']['name'] ?></li>
+  <li><strong>Version:</strong> <?= $system['cms']['version'] ?></li>
+  <li><strong>Storage:</strong> <?= $system['cms']['storage'] ?></li>
+</ul>
 
-  <!-- Pico -->
-  <section class="system-card">
-    <header>
-      <i data-lucide="package"></i>
-      <h2>Pico JSON CMS</h2>
-    </header>
+<h2 class="subtitle">Environment</h2>
+<ul>
+  <li>PHP: <?= $system['env']['php_version'] ?> (<?= $system['env']['php_sapi'] ?>)</li>
+  <li>OS: <?= $system['env']['os'] ?></li>
+  <li>Timezone: <?= $system['env']['timezone'] ?></li>
+  <li>Memory Limit: <?= $system['env']['memory'] ?></li>
+</ul>
 
-    <ul class="system-list">
-      <li>
-        <span>Version</span>
-        <strong><?= $this->e($pico['version']) ?></strong>
-      </li>
-      <li>
-        <span>Base Path</span>
-        <code><?= $this->e($pico['base_path']) ?></code>
-      </li>
-    </ul>
-  </section>
+<h2 class="subtitle">Filesystem</h2>
+<ul>
+  <li>Content writable: <?= $system['paths']['content_writable'] ? 'Yes' : 'No' ?></li>
+  <li>Logs writable: <?= $system['paths']['logs_writable'] ? 'Yes' : 'No' ?></li>
+  <li>Root writable: <?= $system['paths']['root_writable'] ? 'Yes' : 'No' ?></li>
+</ul>
 
-  <!-- PHP -->
-  <section class="system-card">
-    <header>
-      <i data-lucide="code"></i>
-      <h2>PHP</h2>
-    </header>
-
-    <ul class="system-list">
-      <li>
-        <span>Version</span>
-        <strong><?= $this->e($php['version']) ?></strong>
-      </li>
-      <li>
-        <span>SAPI</span>
-        <strong><?= $this->e($php['sapi']) ?></strong>
-      </li>
-    </ul>
-
-    <details class="system-details">
-      <summary>
-        <i data-lucide="layers"></i>
-        Loaded Extensions (<?= count($php['extensions']) ?>)
-      </summary>
-
-      <div class="badge-list">
-        <?php foreach ($php['extensions'] as $ext): ?>
-          <span class="badge"><?= $this->e($ext) ?></span>
-        <?php endforeach; ?>
-      </div>
-    </details>
-  </section>
-
-  <!-- Plugins -->
-  <section class="system-card">
-    <header>
-      <i data-lucide="plug"></i>
-      <h2>Plugins</h2>
-    </header>
-
-    <?php if (empty($plugins)): ?>
-      <p class="muted">
-        <i data-lucide="alert-circle"></i>
-        No plugins loaded
-      </p>
-    <?php else: ?>
-      <ul class="plugin-list">
-        <?php foreach ($plugins as $plugin): ?>
-          <li>
-            <i data-lucide="check-circle"></i>
-            <?= $this->e($plugin) ?>
-          </li>
-        <?php endforeach; ?>
-      </ul>
-    <?php endif; ?>
-  </section>
-
-  <!-- Server -->
-  <section class="system-card">
-    <header>
-      <i data-lucide="server"></i>
-      <h2>Server</h2>
-    </header>
-
-    <ul class="system-list">
-      <li>
-        <span>OS</span>
-        <strong><?= $this->e($server['os']) ?></strong>
-      </li>
-      <li>
-        <span>Time</span>
-        <strong><?= $this->e($server['time']) ?></strong>
-      </li>
-    </ul>
-  </section>
-
-</div>
+<h2 class="subtitle">Plugins</h2>
+<?php if (empty($system['plugins'])): ?>
+  <p>No plugins loaded.</p>
+<?php else: ?>
+  <ul>
+    <?php foreach ($system['plugins'] as $plugin): ?>
+      <li><?= $plugin ?></li>
+    <?php endforeach ?>
+  </ul>
+<?php endif ?>

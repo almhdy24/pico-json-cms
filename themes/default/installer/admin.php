@@ -1,8 +1,8 @@
 <?php $this->layout('layouts/installer', [
   'title' => 'Install – Admin Setup',
-  'step' => 'admin'
+  'step' => 'admin',
+  'flash' => $flash ?? [],
 ]);
-
 ?>
 
 
