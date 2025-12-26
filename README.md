@@ -4,7 +4,12 @@
 
 It is ideal for small websites, low-resource servers, and developers who want full control without databases or heavy frameworks.
 
+## ⚠️ Version Notice
+
+- ❌ v0.2.0 — **Broken / Do not use**
+- ✅ v0.2.1 — First usable public preview
 ---
+
 
 ## 🚀 Current Status
 
