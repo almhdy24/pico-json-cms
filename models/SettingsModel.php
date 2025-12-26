@@ -17,10 +17,9 @@ class SettingsModel extends Model
 {
     protected string $file;
 
-    public function __construct()
+    protected function boot(): void
     {
         $this->file = App::path('content', 'settings.json');
-        parent::__construct();
     }
 
     /**

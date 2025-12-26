@@ -97,6 +97,7 @@ final class AdminController extends Controller
         if ($valid) {
             Session::remove('login_throttle');
             Auth::login();
+            $this->flash('success', 'Login successful.');
             $this->redirect('/admin/dashboard');
         }
 
@@ -117,6 +118,7 @@ final class AdminController extends Controller
     {
         Auth::logout();
         Session::destroy();
+        $this->flash('success', 'Logged out successfully.');
         $this->redirect('/admin/login');
     }
 
@@ -133,6 +135,7 @@ final class AdminController extends Controller
             'postsCount' => count($published),
             'trashCount' => count($trashed),
             'settings'   => $this->settings->all(),
+            'flash'      => $this->getFlash(),
         ]);
     }
 
@@ -158,13 +161,16 @@ final class AdminController extends Controller
             'currentPage' => $page,
             'totalPages'  => $totalPages,
             'basePath'    => '/admin',
+            'flash'       => $this->getFlash(),
         ]);
     }
 
     public function add(): void
     {
         if (!$this->isPost()) {
-            $this->view('admin/post-add');
+            $this->view('admin/post-add', [
+                'flash' => $this->getFlash(),
+            ]);
             return;
         }
 
@@ -181,13 +187,14 @@ final class AdminController extends Controller
             'deleted_at' => null,
         ]);
 
-        $this->flash('success', 'Post created.');
+        $this->flash('success', 'Post created successfully.');
         $this->redirect('/admin');
     }
 
     public function edit(?int $id): void
     {
         if (!$id || !$post = $this->posts->find($id)) {
+            $this->flash('error', 'Post not found.');
             $this->redirect('/admin');
         }
 
@@ -201,11 +208,15 @@ final class AdminController extends Controller
 
             $this->posts->savePost($id, $post);
 
-            $this->flash('success', 'Post updated.');
+            $this->flash('success', 'Post updated successfully.');
             $this->redirect('/admin');
         }
 
-        $this->view('admin/post-edit', compact('id', 'post'));
+        $this->view('admin/post-edit', [
+            'id'    => $id,
+            'post'  => $post,
+            'flash' => $this->getFlash(),
+        ]);
     }
 
     public function delete(?int $id): void
@@ -213,6 +224,9 @@ final class AdminController extends Controller
         if ($post = $this->posts->find($id)) {
             $post['deleted_at'] = time();
             $this->posts->savePost($id, $post);
+            $this->flash('success', 'Post moved to trash.');
+        } else {
+            $this->flash('error', 'Post not found.');
         }
 
         $this->redirect('/admin');
@@ -222,6 +236,7 @@ final class AdminController extends Controller
     {
         $this->view('admin/trash', [
             'posts' => $this->posts->trashed(),
+            'flash' => $this->getFlash(),
         ]);
     }
 
@@ -230,6 +245,9 @@ final class AdminController extends Controller
         if ($post = $this->posts->find($id)) {
             $post['deleted_at'] = null;
             $this->posts->savePost($id, $post);
+            $this->flash('success', 'Post restored successfully.');
+        } else {
+            $this->flash('error', 'Post not found.');
         }
 
         $this->redirect('/admin/trash');
@@ -238,15 +256,20 @@ final class AdminController extends Controller
     public function destroy(?int $id): void
     {
         $this->posts->deletePost($id);
+        $this->flash('success', 'Post permanently deleted.');
         $this->redirect('/admin/trash');
     }
 
     public function emptyTrash(): void
     {
-        foreach ($this->posts->trashed() as $id => $_) {
+        $trashed = $this->posts->trashed();
+        $count = count($trashed);
+        
+        foreach ($trashed as $id => $_) {
             $this->posts->deletePost($id);
         }
 
+        $this->flash('success', "{$count} posts permanently deleted.");
         $this->redirect('/admin/trash');
     }
 
@@ -258,12 +281,45 @@ final class AdminController extends Controller
     {
         if ($this->isPost()) {
             $this->settings->setMany($_POST);
-            $this->flash('success', 'Settings saved.');
+            $this->flash('success', 'Settings saved successfully.');
             $this->redirect('/admin/settings');
         }
 
         $this->view('admin/settings', [
             'settings' => $this->settings->all(),
+            'flash'    => $this->getFlash(),
+        ]);
+    }
+
+    public function system(): void
+    {
+        $system = [
+            'cms' => [
+                'name'    => 'Pico JSON CMS',
+                'version' => App::CORE_VERSION,
+                'storage' => 'Flat-file JSON',
+            ],
+
+            'env' => [
+                'php_version' => PHP_VERSION,
+                'php_sapi'    => PHP_SAPI,
+                'os'          => PHP_OS_FAMILY,
+                'timezone'    => date_default_timezone_get(),
+                'memory'      => ini_get('memory_limit'),
+            ],
+
+            'paths' => [
+                'content_writable' => is_writable(App::path('content')),
+                'logs_writable'    => is_writable(App::path('logs')),
+                'root_writable'    => is_writable(BASE_PATH),
+            ],
+
+            'plugins' => []
+        ];
+
+        $this->view('admin/system', [
+            'system' => $system,
+            'flash'  => $this->getFlash(),
         ]);
     }
 
@@ -286,6 +342,7 @@ final class AdminController extends Controller
         $content = trim($this->input('content', ''));
 
         if ($title === '' || $content === '') {
+            $this->flash('error', 'Title and content are required.');
             $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin');
         }
 
@@ -311,11 +368,19 @@ final class AdminController extends Controller
     private function autoCleanTrash(): void
     {
         $limit = time() - (self::TRASH_DAYS * 86400);
+        $cleaned = 0;
 
         foreach ($this->posts->trashed() as $id => $post) {
             if ($post['deleted_at'] < $limit) {
                 $this->posts->deletePost($id);
+                $cleaned++;
             }
+        }
+
+        // Optionally add flash for auto-cleanup
+        if ($cleaned > 0) {
+            // Note: This won't display since it's in constructor
+            // Consider logging instead
         }
     }
 }

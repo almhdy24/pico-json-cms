@@ -48,15 +48,21 @@ abstract class Controller
      * Load a model by name
      */
     protected function model(string $model): object
-    {
-        $class = "Models\\{$model}";
-
-        if (!class_exists($class)) {
-            throw new \RuntimeException("Model not found: {$class}");
-        }
-
-        return new $class();
+{
+    // If fully-qualified class name is given
+    if (str_contains($model, '\\')) {
+        $class = $model;
+    } else {
+        // Short name → assume Models namespace
+        $class = 'Models\\' . $model;
     }
+
+    if (!class_exists($class)) {
+        throw new \RuntimeException("Model not found: {$class}");
+    }
+
+    return new $class();
+}
 
     /* =====================================================
      * Session Helpers

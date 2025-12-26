@@ -25,10 +25,9 @@ class PostsModel extends Model
      */
     protected string $file;
 
-    public function __construct()
+    protected function boot(): void
     {
         $this->file = App::path('content', 'posts.json');
-        parent::__construct();
     }
 
     /**
